@@ -21,6 +21,9 @@ class BuildEc2EnvironmentStack(cdk.Stack):
             sort_key=dynamodb.Attribute(name="last_name", type=dynamodb.AttributeType.STRING),
         )
         
+        # This is to ensure that when we destroy, the table doesn't stick around
+        dynamo_table.add_removal_policy(cdk.RemovalPolicy.DESTROY)
+        
         ssm_session_manager_policy = iam.PolicyStatement(
             actions=[
                 "ssmmessages:CreateControlChannel",
