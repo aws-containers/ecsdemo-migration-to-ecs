@@ -63,14 +63,28 @@ class BuildEc2EnvironmentStack(cdk.Stack):
         )
         
         user_data = ec2.UserData.custom(f"""#!/usr/bin/env bash
-# create user user_api_svc
-# create directory /usr/local/user_api
-# pull files down (github gist for now?)
-# chmod +x
-# systemd unit
-useradd user_api_svc
-mkdir -p /usr/local/user_api/models
-echo 'DYNAMO_TABLE={dynamo_table.table_name}' >> /usr/local/user_api/config.ini
+        
+# Pulling down the code and creating necessary folders/user
+wget https://gist.githubusercontent.com/adamjkeller/cb2dfcd2ad6c6dc74d02c83759f2a1c5/raw/93b65f6b11d07574667d636678e7716b805a8097/setup.sh
+bash -x ./setup.sh
+
+# Create systemd unit
+cat << EOF >> /etc/systemd/system/user-api.service
+[Unit]
+Description=User API
+After=network.target
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+User=root
+Environment=DYNAMO_TABLE={dynamo_table.table_name}
+WorkingDirectory=/usr/local/user_api
+ExecStart=/usr/bin/python3 main.py
+EOF
+
+systemctl enable user-api.service
+systemctl start user-api.service
 """)
         
         asg = autoscaling.AutoScalingGroup(
