@@ -9,20 +9,22 @@ from aws_cdk import (
 
 class BuildEc2EnvironmentStack(cdk.Stack):
 
-    def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
+    def __init__(self, scope: cdk.Construct, construct_id: str, deploy_env: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+        self.deploy_env = deploy_env
 
         # Will create VPC, spanning two AZ's, private and public with NAT Gateways
         _vpc = ec2.Vpc(self, "DemoVPC")
         
         dynamo_table = dynamodb.Table(
             self, "UsersTable",
+            table_name=f"UsersTable-{self.deploy_env}",
             partition_key=dynamodb.Attribute(name="first_name", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="last_name", type=dynamodb.AttributeType.STRING),
         )
         
         # This is to ensure that when we destroy, the table doesn't stick around
-        dynamo_table.add_removal_policy(cdk.RemovalPolicy.DESTROY)
+        dynamo_table.apply_removal_policy(cdk.RemovalPolicy.DESTROY)
         
         ssm_session_manager_policy = iam.PolicyStatement(
             actions=[
@@ -103,3 +105,9 @@ systemctl start user-api.service
         asg.add_to_role_policy(ssm_session_manager_policy)
         dynamo_table.grant_read_write_data(asg.role)
         
+        cdk.CfnOutput(
+            self, "DynamoDBTableName",
+            value=dynamo_table.table_name, 
+            description="Users DynamoDB table", 
+            export_name="UserAPIDynamoDBTable"
+        )

@@ -67,10 +67,11 @@ def load_data():
                     phone=row[3]
                 ).save()
         return JSONResponse(status_code=status.HTTP_200_OK, content={"Status": "Success"})
-    except:
+    except Exception as e:
+        print(e)
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"Status": "Failed"})
         
         
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8080, log_level="info")
+    uvicorn.run("main:app", host="0.0.0.0", port=8080, log_level="info")

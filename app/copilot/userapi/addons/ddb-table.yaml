@@ -1,0 +1,47 @@
+Parameters:
+    App:
+        Type: String
+        Description: Your application's name.
+    Env:
+        Type: String
+        Description: The environment name your service, job, or workflow is being deployed to.
+    Name:
+        Type: String
+        Description: The name of the service, job, or workflow being deployed.
+Resources:
+    UsersTablePolicy:
+        Type: AWS::IAM::ManagedPolicy
+        Properties:
+            PolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Sid: DDBActions
+                      Effect: Allow
+                      Action:
+                        - dynamodb:BatchGetItem
+                        - dynamodb:GetRecords
+                        - dynamodb:GetShardIterator
+                        - dynamodb:Query
+                        - dynamodb:GetItem
+                        - dynamodb:Scan
+                        - dynamodb:ConditionCheckItem
+                        - dynamodb:BatchWriteItem
+                        - dynamodb:PutItem
+                        - dynamodb:UpdateItem
+                        - dynamodb:DeleteItem
+                        - dynamodb:DescribeTable
+                      Resource:
+                        - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/UsersTable-${Env}'
+
+Outputs:
+    # 1. You also need to output the IAM ManagedPolicy so that Copilot can inject it to your ECS task role.
+    UsersTableAccessPolicyArn:
+        Description: "The ARN of the ManagedPolicy to attach to the task role."
+        Value: !Ref UsersTablePolicy
+    # 2. If you want to inject a property of your resource as an environment variable to your ECS task,
+    # then you need to define an output for it.
+    #
+    # For example, the output MyTableName will be injected in capital snake case, MY_TABLE_NAME, to your task.
+    #MyTableName:
+    #  Description: "The name of this DynamoDB."
+    #  Value: !Ref MyTable

@@ -1,13 +1,21 @@
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute
+from os import getenv
+
+def get_region():
+    from requests import get
+    from json import loads
+    region = loads(get(f'{getenv("ECS_CONTAINER_METADATA_URI_V4")}/task').text).get('AvailabilityZone')[:-1]
+    #region = loads(get('http://169.254.169.254/latest/dynamic/instance-identity/document').text).get('region')
+    return region
 
 class UserModel(Model):
     """
     User table
     """
     class Meta:
-        table_name = "demoAppUsers"
-        region = "us-west-2"
+        table_name = getenv('DYNAMO_TABLE')
+        region = get_region()
         
     email = UnicodeAttribute(null=True)
     phone = UnicodeAttribute(null=True)
