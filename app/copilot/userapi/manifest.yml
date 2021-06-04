@@ -13,10 +13,19 @@ image:
   # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/backend-service/#image-build
   build: Dockerfile
   port: 8080
+  healthcheck:
+    command: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+    interval: 5s
+    retries: 2
+    timeout: 5s
+    start_period: 5s
 
 cpu: 256       # Number of CPU units for the task.
 memory: 512    # Amount of memory in MiB used by the task.
-count: 1       # Number of tasks that should be running in your service.
+count:
+  range: 1-10
+  cpu_percentage: 50
+  memory_percentage: 80
 exec: true     # Enable running commands in your container.
 
 # Optional fields for more advanced use-cases.

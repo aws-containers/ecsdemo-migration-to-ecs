@@ -1,7 +1,7 @@
 import csv
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse, RedirectResponse
-from models.dynamo_model import UserModel
+from dynamo_model import UserModel
 
 app = FastAPI(
     title="User API Service",
@@ -21,6 +21,10 @@ def get_user_details(first_name=None, last_name=None, get_all=False):
         
     return return_data
         
+@app.get("/health")
+def health():
+    return JSONResponse(status_code=status.HTTP_200_OK, content={"Status": "Healthy"})
+
 @app.get("/")
 def root():
     return RedirectResponse(url='/docs')

@@ -1,6 +1,10 @@
 FROM public.ecr.aws/bitnami/python:3.7
 
-COPY . /user-api
+COPY main.py \
+  dynamo_model.py \
+  requirements.txt \
+  users.csv \
+  /user-api/
 
 WORKDIR /user-api
 
