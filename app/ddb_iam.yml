@@ -38,10 +38,3 @@ Outputs:
     UsersTableAccessPolicyArn:
         Description: "The ARN of the ManagedPolicy to attach to the task role."
         Value: !Ref UsersTablePolicy
-    # 2. If you want to inject a property of your resource as an environment variable to your ECS task,
-    # then you need to define an output for it.
-    #
-    # For example, the output MyTableName will be injected in capital snake case, MY_TABLE_NAME, to your task.
-    #MyTableName:
-    #  Description: "The name of this DynamoDB."
-    #  Value: !Ref MyTable
