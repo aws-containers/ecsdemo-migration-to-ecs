@@ -102,8 +102,18 @@ systemctl start user-api.service
             vpc=_vpc
         )
         
+        asg.connections.security_groups[0].add_ingress_rule(
+            peer=asg.connections.security_groups[0],
+            connection=ec2.Port(
+                protocol=ec2.Protocol.TCP,
+                string_representation="Self 8080",
+                from_port=8080,
+                to_port=8080
+            )
+        )
+        
         asg.add_to_role_policy(ssm_session_manager_policy)
-        dynamo_table.grant_read_write_data(asg.role)
+        dynamo_table.grant_full_access(asg.role)
         
         cdk.CfnOutput(
             self, "DynamoDBTableName",
