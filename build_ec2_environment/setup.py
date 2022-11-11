@@ -19,10 +19,8 @@ setuptools.setup(
     packages=setuptools.find_packages(where="build_ec2_environment"),
 
     install_requires=[
-        "aws-cdk.core==1.106.1",
-        "aws-cdk.aws-ec2==1.106.1",
-        "aws-cdk.aws-autoscaling==1.106.1",
-        "aws-cdk.aws-dynamodb==1.106.1",
+        "aws-cdk-lib>=2.0.0",
+        "constructs>=10.0.0",
     ],
 
     python_requires=">=3.6",

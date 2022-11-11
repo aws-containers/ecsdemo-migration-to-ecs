@@ -11,3 +11,6 @@ __pycache__
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# Copilot asset directory
+copilot
