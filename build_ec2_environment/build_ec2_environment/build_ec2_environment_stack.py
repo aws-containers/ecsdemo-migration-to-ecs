@@ -70,7 +70,7 @@ class BuildEc2EnvironmentStack(cdk.Stack):
         user_data = ec2.UserData.custom(f"""#!/usr/bin/env bash
         
 # Pulling down the code and creating necessary folders/user
-wget https://gist.githubusercontent.com/adamjkeller/cb2dfcd2ad6c6dc74d02c83759f2a1c5/raw/0154be3a560aa52fa6de5ea94fe95b62a30be10c/setup.sh
+wget https://raw.githubusercontent.com/aws-containers/ecsdemo-migration-to-ecs/main/setup.sh
 bash -x ./setup.sh
 
 # Create systemd unit
